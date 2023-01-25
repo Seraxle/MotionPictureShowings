@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/movieShowings">
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -24,5 +24,23 @@
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieShowings"
+        android:name="com.example.motionpictureshowings.MovieShowings"
+        android:label="movie_showings"
+        tools:layout="@layout/movie_showings" >
+        <action
+            android:id="@+id/action_movieShowings_to_tvShowings"
+            app:destination="@id/tvShowings" />
+    </fragment>
+    <fragment
+        android:id="@+id/tvShowings"
+        android:name="com.example.motionpictureshowings.TvShowings"
+        android:label="tv_showings"
+        tools:layout="@layout/tv_showings" >
+        <action
+            android:id="@+id/action_tvShowings_to_movieShowings"
+            app:destination="@id/movieShowings" />
     </fragment>
 </navigation>
