@@ -1,17 +1,27 @@
 package com.example.motionpictureshowings
 
 import androidx.lifecycle.ViewModel
-import com.example.motionpictureshowings.model.ShowingItem
+import com.example.motionpictureshowings.model.MovieItem
+import com.example.motionpictureshowings.model.TvItem
 
 class ShowingViewModel: ViewModel() {
 
-    private var showingItemList: ArrayList<ShowingItem> = ArrayList()
+    private var movieShowingItemList: ArrayList<MovieItem> = ArrayList()
+    private var tvShowingItemList: ArrayList<TvItem> = ArrayList()
 
-    fun getShowingItemList() : ArrayList<ShowingItem> {
-        return this.showingItemList
+    fun getMovieShowingItemList() : ArrayList<MovieItem> {
+        return this.movieShowingItemList
     }
 
-    fun setShowingItemList(showingItemList: ArrayList<ShowingItem>) {
-        this.showingItemList = showingItemList
+    fun setMovieShowingItemList(movieShowingItemList: ArrayList<MovieItem>) {
+        this.movieShowingItemList = movieShowingItemList
+    }
+
+    fun getTvShowingItemList() : ArrayList<TvItem> {
+        return this.tvShowingItemList
+    }
+
+    fun setTvShowingItemList(tvShowingItemList: ArrayList<TvItem>) {
+        this.tvShowingItemList = tvShowingItemList
     }
 }

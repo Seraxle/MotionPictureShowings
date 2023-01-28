@@ -9,4 +9,6 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="fragment_first_textview_text">Motion Picture Showings \n powered by The Movie Database API</string>
+    <string name="fragment_first_button_text">Enter</string>
 </resources>

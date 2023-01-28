@@ -7,11 +7,13 @@
     tools:context=".TvShowings">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="411dp"
-        android:layout_height="660dp"
+        android:id="@+id/tvRecyclerView"
+        android:layout_width="404dp"
+        android:layout_height="735dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/tv_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>
