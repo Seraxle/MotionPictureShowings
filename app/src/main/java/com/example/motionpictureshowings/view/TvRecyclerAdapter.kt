@@ -1,20 +1,21 @@
-package com.example.motionpictureshowings
+package com.example.motionpictureshowings.view
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.motionpictureshowings.model.TvItem
+import com.example.motionpictureshowings.R
+import com.example.motionpictureshowings.model.TvResults
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.tv_item.view.*
 
 class TvRecyclerAdapter(
-    private val recyclerList: ArrayList<TvItem>,
+    private val recyclerList: List<TvResults>?,
     private val listener: onTvClickListener
 ) : RecyclerView.Adapter<TvRecyclerAdapter.recyclerViewHolder>() {
 
-    private var filterList: ArrayList<TvItem> = ArrayList(recyclerList)
-    private var anotherList: ArrayList<TvItem> = ArrayList()
+    /*private var filterList: ArrayList<TvItem> = ArrayList(recyclerList)
+    private var anotherList: ArrayList<TvItem> = ArrayList()*/
 
     interface onTvClickListener {
         fun onTvClickListener(position: Int) {
@@ -43,18 +44,18 @@ class TvRecyclerAdapter(
         return recyclerViewHolder(view)
     }
 
-    override fun onBindViewHolder(p0: TvRecyclerAdapter.recyclerViewHolder, p1: Int) {
-        val tvItem = recyclerList[p1]
+    override fun onBindViewHolder(p0: recyclerViewHolder, p1: Int) {
+        val tvItem = recyclerList?.get(p1)
         val url = StringBuilder("http://image.tmdb.org/t/p/w500")
 
-        p0.tvName.text = tvItem.results.name
-        p0.tvScore.text = tvItem.results.vote_average.toString()
-        url.append(tvItem.results.poster_path)
+        p0.tvName.text = tvItem?.name
+        p0.tvScore.text = tvItem?.vote_average.toString()
+        url.append(tvItem?.poster_path)
         Picasso.get().load(url.toString()).into(p0.tvImage)
     }
 
     override fun getItemCount(): Int {
-        return recyclerList.size
+        return recyclerList!!.size
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.motionpictureshowings
+package com.example.motionpictureshowings.view
 
 import android.os.Bundle
 import android.util.Log
@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.motionpictureshowings.R
+import com.example.motionpictureshowings.model.ShowingsAPI
 import com.example.motionpictureshowings.databinding.TvShowingsBinding
 import com.example.motionpictureshowings.model.TvItem
+import com.example.motionpictureshowings.model.TvResults
+import com.example.motionpictureshowings.viewmodel.ShowingViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,13 +47,17 @@ class TvShowings : Fragment(), TvRecyclerAdapter.onTvClickListener {
         //HOW MANY BINDINGS?
         //binding.recyclerView.adapter = RecyclerAdapter(showingViewModel.getShowingItemList(), this)
 
-        binding.tvRecyclerView.adapter = TvRecyclerAdapter(showingViewModel.getTvShowingItemList(), this)
-        binding.tvRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.tvRecyclerView.setHasFixedSize(true)
+        showingViewModel.getTvShowingItemList().observe(viewLifecycleOwner) {
+            binding.tvRecyclerView.adapter = TvRecyclerAdapter(showingViewModel.getTvShowingItemList().value, this)
+            binding.tvRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.tvRecyclerView.setHasFixedSize(true)
+        }
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        showingViewModel.destroy()
         _binding = null
     }
 
@@ -56,33 +65,40 @@ class TvShowings : Fragment(), TvRecyclerAdapter.onTvClickListener {
         val retrofit: Retrofit = Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(
             GsonConverterFactory.create()).build()
         val showingsAPI = retrofit.create(ShowingsAPI::class.java)
-        val tvCall: Call<ArrayList<TvItem>> = showingsAPI.getTvDetails()
+        val tvCall: Call<TvItem> = showingsAPI.getTvDetails()
 
-        tvCall.enqueue(object: Callback<ArrayList<TvItem>> {
+        tvCall.enqueue(object: Callback<TvItem> {
             override fun onResponse(
-                call: Call<ArrayList<TvItem>>,
-                response: Response<ArrayList<TvItem>>
+                call: Call<TvItem>,
+                response: Response<TvItem>
             ) {
                 if (!response.isSuccessful) {
                     Log.e("FAIL", "Retrofit Failure")
                     return
                 }
 
-                val tvList: ArrayList<TvItem>? = response.body()
-                val tvItemList: ArrayList<TvItem> = ArrayList()
+                val tvList: TvItem? = response.body()
+                val tvItemList: ArrayList<TvResults> = ArrayList()
 
                 if (tvList != null) {
-                    for (i in 0 until tvList.size) {
-                        tvItemList.add(tvList[i])
+                    for (i in 0 until tvList.results.size) {
+                        tvItemList.add(tvList.results[i])
                     }
                 }
-                showingViewModel.setTvShowingItemList(tvItemList)
+                //showingViewModel.setTvShowingItemList(tvItemList)
+                response.body()?.let { showingViewModel.setTvShowingItemList(it.results) }
             }
 
-            override fun onFailure(call: Call<ArrayList<TvItem>>, t: Throwable) {
+            override fun onFailure(call: Call<TvItem>, t: Throwable) {
                 t.message?.let{ Log.e("FAILURE", it) }
             }
 
         })
+    }
+
+    override fun onTvClickListener(position: Int) {
+        var clickedTvShow = showingViewModel.getTvShowingItemList().value?.get(position)
+        showingViewModel.setChosenTvShow(clickedTvShow)
+        findNavController().navigate(R.id.action_tvShowings_to_showingDetails)
     }
 }

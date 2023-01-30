@@ -1,21 +1,23 @@
-package com.example.motionpictureshowings
+package com.example.motionpictureshowings.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.motionpictureshowings.model.MovieItem
+import com.example.motionpictureshowings.R
+import com.example.motionpictureshowings.model.MovieResults
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_item.view.*
-import kotlinx.android.synthetic.main.tv_item.view.*
+import kotlin.math.log
 
 class MovieRecyclerAdapter(
-    private val recyclerList: ArrayList<MovieItem>,
+    private val recyclerList: List<MovieResults>?,
     private val listener: onMovieClickListener
 ) : RecyclerView.Adapter<MovieRecyclerAdapter.recyclerViewHolder>() {
 
-    private var filterList: ArrayList<MovieItem> = ArrayList(recyclerList)
-    private var anotherList: ArrayList<MovieItem> = ArrayList()
+    /*private var filterList: ArrayList<MovieItem> = ArrayList(recyclerList)
+    private var anotherList: ArrayList<MovieItem> = ArrayList()*/
 
     interface onMovieClickListener {
         fun onMovieClickListener(position: Int) {
@@ -45,17 +47,19 @@ class MovieRecyclerAdapter(
     }
 
     override fun onBindViewHolder(p0: recyclerViewHolder, p1: Int) {
-        val movieItem = recyclerList[p1]
+        val movieItem = recyclerList?.get(p1)
         val url = StringBuilder("http://image.tmdb.org/t/p/w500")
 
-        p0.movieName.text = movieItem.results.title
-        p0.movieScore.text = movieItem.results.vote_average.toString()
-        url.append(movieItem.results.poster_path)
-        Picasso.get().load(url.toString()).into(p0.movieImage)
+        //p1? what should be passed in?
+        p0.movieName.text = movieItem?.title
+        p0.movieScore.text = movieItem?.vote_average.toString()
+        url.append(movieItem?.poster_path)
+        Log.e("debug", url.toString())
+        Picasso.get().load(url.toString()).resize(300,350).into(p0.movieImage)
     }
 
     override fun getItemCount(): Int {
-        return recyclerList.size
+        return recyclerList!!.size
     }
 
 }

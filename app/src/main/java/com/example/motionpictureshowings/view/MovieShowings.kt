@@ -1,4 +1,4 @@
-package com.example.motionpictureshowings
+package com.example.motionpictureshowings.view
 
 import android.os.Bundle
 import android.util.Log
@@ -7,9 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.motionpictureshowings.R
+import com.example.motionpictureshowings.model.ShowingsAPI
 import com.example.motionpictureshowings.databinding.MovieShowingsBinding
 import com.example.motionpictureshowings.model.MovieItem
+import com.example.motionpictureshowings.model.MovieResults
+import com.example.motionpictureshowings.viewmodel.ShowingViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,17 +44,24 @@ class MovieShowings : Fragment(), MovieRecyclerAdapter.onMovieClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        /*val appBarConfiguration = AppBarConfiguration(setOf(R.id.movieShowings, R.id.tvShowings))
+        binding.bottomNavigationView.setupWithNavController(findNavController(), appBarConfiguration)*/
+
         getMovieData()
 
         //HOW MANY BINDINGS?
-        binding.movieRecyclerView.adapter = MovieRecyclerAdapter(showingViewModel.getMovieShowingItemList(), this)
-        binding.movieRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.movieRecyclerView.setHasFixedSize(true)
+        showingViewModel.getMovieShowingItemList().observe(viewLifecycleOwner) {
+            binding.movieRecyclerView.adapter = MovieRecyclerAdapter(showingViewModel.getMovieShowingItemList().value, this)
+            binding.movieRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.movieRecyclerView.setHasFixedSize(true)
+        }
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        showingViewModel.destroy()
         _binding = null
     }
 
@@ -55,33 +69,40 @@ class MovieShowings : Fragment(), MovieRecyclerAdapter.onMovieClickListener {
         val retrofit: Retrofit = Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(
             GsonConverterFactory.create()).build()
         val showingsAPI = retrofit.create(ShowingsAPI::class.java)
-        val movieCall: Call<ArrayList<MovieItem>> = showingsAPI.getMovieDetails()
+        val movieCall: Call<MovieItem> = showingsAPI.getMovieDetails()
 
-        movieCall.enqueue(object: Callback<ArrayList<MovieItem>> {
+        movieCall.enqueue(object: Callback<MovieItem> {
             override fun onResponse(
-                call: Call<ArrayList<MovieItem>>,
-                response: Response<ArrayList<MovieItem>>
+                call: Call<MovieItem>,
+                response: Response<MovieItem>
             ) {
                 if (!response.isSuccessful) {
                     Log.e("FAIL", "Retrofit Failure")
                     return
                 }
 
-                val movieList: ArrayList<MovieItem>? = response.body()
-                val movieItemList: ArrayList<MovieItem> = ArrayList()
+                val movieList: MovieItem? = response.body()
+                val movieItemList: ArrayList<MovieResults> = ArrayList()
 
                 if (movieList != null) {
-                    for (i in 0 until movieList.size) {
-                        movieItemList.add(movieList[i])
+                    for (i in 0 until movieList.results.size) {
+                        movieItemList.add(movieList.results[i])
                     }
                 }
-                showingViewModel.setMovieShowingItemList(movieItemList)
+                //showingViewModel.setMovieShowingItemList(movieItemList)
+                response.body()?.let { showingViewModel.setMovieShowingItemList(it.results) }
             }
 
-            override fun onFailure(call: Call<ArrayList<MovieItem>>, t: Throwable) {
+            override fun onFailure(call: Call<MovieItem>, t: Throwable) {
                 t.message?.let{ Log.e("FAILURE", it) }
             }
 
         })
+    }
+
+    override fun onMovieClickListener(position: Int) {
+        var clickedMovie = showingViewModel.getMovieShowingItemList().value?.get(position)
+        showingViewModel.setChosenMovie(clickedMovie)
+        findNavController().navigate(R.id.action_movieShowings_to_showingDetails)
     }
 }
