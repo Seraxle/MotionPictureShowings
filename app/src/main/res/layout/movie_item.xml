@@ -14,7 +14,8 @@
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" >
+        app:layout_constraintVertical_bias="0.0"
+        app:cardBackgroundColor="@color/movie_item">
 
         <ImageView
             android:id="@+id/movieImage"
@@ -29,6 +30,7 @@
             android:gravity="center"
             android:text="TextView"
             android:textSize="25sp"
+            android:textStyle="bold"
             android:translationX="180dp"
             android:translationY="10dp" />
 

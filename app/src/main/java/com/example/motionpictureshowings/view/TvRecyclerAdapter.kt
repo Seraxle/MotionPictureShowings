@@ -46,10 +46,14 @@ class TvRecyclerAdapter(
 
     override fun onBindViewHolder(p0: recyclerViewHolder, p1: Int) {
         val tvItem = recyclerList?.get(p1)
-        val url = StringBuilder("http://image.tmdb.org/t/p/w500")
+        val url = StringBuilder("https://image.tmdb.org/t/p/w500")
 
         p0.tvName.text = tvItem?.name
-        p0.tvScore.text = tvItem?.vote_average.toString()
+
+        val score = StringBuilder(tvItem?.vote_average.toString())
+        score.append("/10")
+        p0.tvScore.text = score.toString()
+
         url.append(tvItem?.poster_path)
         Picasso.get().load(url.toString()).into(p0.tvImage)
     }

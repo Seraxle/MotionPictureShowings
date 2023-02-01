@@ -1,6 +1,5 @@
 package com.example.motionpictureshowings.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import com.example.motionpictureshowings.R
 import com.example.motionpictureshowings.model.MovieResults
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_item.view.*
-import kotlin.math.log
 
 class MovieRecyclerAdapter(
     private val recyclerList: List<MovieResults>?,
@@ -48,13 +46,17 @@ class MovieRecyclerAdapter(
 
     override fun onBindViewHolder(p0: recyclerViewHolder, p1: Int) {
         val movieItem = recyclerList?.get(p1)
-        val url = StringBuilder("http://image.tmdb.org/t/p/w500")
+        val url = StringBuilder("https://image.tmdb.org/t/p/w500")
 
         //p1? what should be passed in?
         p0.movieName.text = movieItem?.title
-        p0.movieScore.text = movieItem?.vote_average.toString()
+
+        val score = StringBuilder(movieItem?.vote_average.toString())
+        score.append("/10")
+        p0.movieScore.text = score.toString()
+
+
         url.append(movieItem?.poster_path)
-        Log.e("debug", url.toString())
         Picasso.get().load(url.toString()).resize(300,350).into(p0.movieImage)
     }
 

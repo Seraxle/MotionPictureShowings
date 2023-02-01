@@ -2,9 +2,7 @@ package com.example.motionpictureshowings.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.motionpictureshowings.model.MovieItem
 import com.example.motionpictureshowings.model.MovieResults
-import com.example.motionpictureshowings.model.TvItem
 import com.example.motionpictureshowings.model.TvResults
 
 class ShowingViewModel: ViewModel() {
